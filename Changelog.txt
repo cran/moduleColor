@@ -1,0 +1,126 @@
+2008-04-03: 1.05-02
+
+	. Bugfixes: misspelled variables and misplaced brackets
+
+2008-04-01:
+
+	. Minor improvements in precision of color alignment in plotHclustColors 
+
+2008-03-26: 1.05-1
+
+	. bugfix: mergeCloseModules behaves properly when input 'colors' is a factor, 
+	in particular it drops unused levels to avoid returning empty modules.
+
+2008-03-12: 1.05
+
+	. error trapping in moduleEigengenes revised: hubs can be substituted
+	for eigengenes whose calculation failed.
+
+	. mergeCloseModules gets its own trapErrors, but it isn't all that
+	useful right now.
+
+
+2008-03-07: 1.04-01
+
+	. bugfixes in multiSetMEs
+
+2008-03-06: 1.04
+
+	. moduleEigengenes and multiSetMEs now optionally trap errors in module
+	eigengene calculation and remove the offending modules from the
+	result.
+
+	. moduleEigengenes and multiSetMEs can optionally exclude the grey
+	module eigengene from the returned PCs.
+
+	. moduleEigengenes and multiSetMEs can optionally return only the
+	valid PCs
+
+(2008-03-03)
+
+	colors2labels checks for NAs in labels
+
+2008-02-27
+
+	1.03-04: colors2labels: return value now has the dimensions of input
+	labels, so works correctly on matrices and such.
+
+2008-02-24
+
+	1.03-03: changing default MEprefix to "ME". setMEprefix doesn't seem to work!
+
+2008-02-20
+
+	mergeCloseModules: all print statements are printFlush for consistency.
+
+2008-02-16:
+	plotHclustColors now uses names(colors) as rowNames if the latter are NULL and the former
+	are valid (have the right lenght).
+
+2008-02-14:
+	Fixed a couple of bugs in .clustOrder. 
+
+2008-02-12:
+	Fixed problems in mergeCloseModules, consensusOrderMEs, orderMEs when
+	number of proper modules is 1 or none.  
+
+2008-02-05:
+	Fixed error in removeGreyME.
+
+2008-01-31:
+	Added the function removeGreyME
+
+2008-01-29: Version 1.03: 
+	Minor robustness improvements: 
+	 . mergeCloseModules won't fail if there are less than two proper modules.
+	Addition of options:
+	 . moduleColor.[set,get]MEprefix: the prefix used to label module
+	 eigengenes. For compatibility with old code, standard startup value
+	 is "PC", but recommended value is "ME".
+
+2008-01-24: Minor bug fixes:
+	Make the call to impute.knn more crash-resistant: The parameter k now doesn't exceed 
+	number of supplied genes -1.
+	White was listed twice in BaseColors; second instance removed (thanks
+	to Jeremy Miller for noticing this)
+
+2007-11-21: Functionality improvement/bug fix:
+
+	checkSets: now accepts parameter useSets to only check selected
+	components of the data vector. This fixes a problem with calling
+	consensusOrderMEs, mergeCloseModules etc. with multi-data but only for
+	one set.
+
+2007-09-18: version: 1.02
+
+	mergeCloseModules: changed default useAbs to FALSE (!!!!)
+	                   fixed a bug in counting of old and new modules
+			   fixed a bug appearing when no merging was necessary
+			   
+	plotHclustColors, moduleEigengenes: color changed to colors (!)
+
+	moduleEigengenes: Decreased verbosity for verbose=1
+
+	orderMEs: grey ME not found triggers a warning instead of an error.
+
+	labels2colors: if number of labels exceeds number of availbale colors,
+	recycle colors with suffix .1, .2 etc added. Caution: this will make
+	extra colors incompatible with standard plotting, but compatible with
+	mergeCloseModules (which relies on names of different modules being
+	unique).
+
+	normalizeLabels: fixed a bug that merged modules of same size because
+			rank was resolving ties by averages.
+
+
+2007-09-17: version 1.01.01
+
+Bug fixes and small changes:
+
+	moduleEigengenes: fixed problem with saving .Random.seed if the variable doesn't exist (yet)
+
+	multiSetMEs: added argument impute
+
+	plotHclustColors: Fixed to work if color is a single vector of colors
+
+	updated URL in DESCRIPTION
