@@ -30,9 +30,10 @@ if the latter are present, numerical data will be imputed, using function \code{
 the same module as the missing datum. The function \code{impute.knn} uses a fixed random seed giving
 repeatable results.}
 
-  \item{nPC}{Number of principal components to be calculated. If only eigengenes are needed, it is best
-to set it to 1 (default). If variance explained is needed as well, use value \code{NULL}. This will cause
-all principal components to be computed, which is slower.}
+  \item{nPC}{Number of principal components and variance explained entries to be calculated. Note
+that only the first principal component is returned; the rest are used only for the calculation of
+proportion of variance explained. The number of returned variance explained entries is
+currently \code{min(nPC, 10)}. If given \code{nPC} is greater than 10, a warning is issued.}
 
   \item{align}{Controls whether eigengenes, whose orientation is undetermined, should be aligned with
 average expression (\code{align = "along average"}, the default) or left as they are (\code{align = ""}).
@@ -110,8 +111,8 @@ expression in each module. The columns are named by the corresponding color with
 prepended, e.g., \code{AEturquoise} etc.}
   \item{varExplained}{A dataframe in which each column corresponds to a module, with the component
 \code{varExplained[PC, module]} giving the variance of module \code{module} explained by the principal
-component no. \code{PC}. This is only accurate if all principal components have been computed (input
-\code{nPC = NULL}). At most 5 principal components are recorded in this dataframe.}
+component no. \code{PC}. The calculation is exact irrespective of the number of computed principal
+components. At most 10 variance explained values are recorded in this dataframe.}
   \item{nPC}{A copy of the input \code{nPC}.} 
   \item{validMEs}{A boolean vector. Each component (corresponding to the columns in \code{data})
 is \code{TRUE} if the corresponding eigengene is valid, and \code{FALSE}

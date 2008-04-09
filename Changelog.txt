@@ -1,3 +1,16 @@
+2008-04-09: 1.05-03
+
+	. Changed calculation of proportion of variance explained in
+	  moduleEigengenes. The calculation is now exact irrespective of nPC.
+	  The argument nPC now only serves to indicate how many varExplained
+	  entries are desired.
+	. Added argument impute = TRUE to mergeCloseModules that gets passed
+	  to multiSetMEs. 
+	. removed a bug in mergeCloseModules that caused failure with one
+	  proper module and relabel = TRUE
+	. removeGreyME now works also when MEs is a matrix (previously worked
+	  only when MEs was a data frame). 
+
 2008-04-03: 1.05-02
 
 	. Bugfixes: misspelled variables and misplaced brackets

@@ -7,6 +7,7 @@ eigengenes.
 }
 \usage{
 mergeCloseModules(exprData, colors, cutHeight = 0.2, MEs = NULL, 
+                  impute = TRUE,
                   useAbs = FALSE, iterate = TRUE, relabel = FALSE, 
                   colorSeq = NULL, getNewMEs = TRUE, useSets = NULL,
                   checkDataFormat = TRUE,
@@ -29,6 +30,10 @@ same color label in all sets, hence a single vector. }
   \item{MEs}{If module eigengenes have been calculated before, the user can save some computational time
 by inputting them. \code{MEs} should have the same format as \code{exprData}. 
 If they are not given, they will be calculated.}
+
+  \item{impute}{Should missing values be imputed in eigengene calculation? If imputation is disabled, the
+presence of \code{NA} entries will cause the eigengene calculation to fail and eigengenes will be
+replaced by their hubgene approximation. See \code{\link{moduleEigengenes}} for more details.}
 
   \item{useAbs}{Specifies whether absolute value of correlation or plain correlation (of module
 eigengenes) should be used in calculating module dissimilarity.}

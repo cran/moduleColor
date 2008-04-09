@@ -9,7 +9,7 @@
 #
 #-----------------------------------------------------------------------------------------------
 
-.moduleColorOptions = list(MEprefix = "ME", version = "1.05-2", revisionDate = "Apr 03, 2008")
+.moduleColorOptions = list(MEprefix = "ME", version = "1.05-3", revisionDate = "Apr 09, 2008")
 
 .onLoad = function(libname, pkgname)
 {
@@ -140,7 +140,10 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
     stop()
   }
 
-  maxVarExplained = 5;
+  maxVarExplained = 10;
+  if (nPC>maxVarExplained)
+    warning(paste("Given nPC is too large. Will use value", maxVarExplained));
+
   nVarExplained = min(nPC, maxVarExplained);
   modlevels=levels(factor(colors))
   if (excludeGrey) modlevels = modlevels[as.character(modlevels)!=as.character(grey)]
@@ -176,7 +179,9 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
         }
         datModule=t(scale(t(datModule)));
         svd1 = svd(datModule, nu = min(n, p, nPC), nv = min(n, p, nPC));
-        varExpl[,i]= (svd1$d[1:min(n,p,nVarExplained)])^2/sum(svd1$d^2)
+        # varExpl[,i]= (svd1$d[1:min(n,p,nVarExplained)])^2/sum(svd1$d^2)
+        veMat = cor(svd1$v[, c(1:min(n,p,nVarExplained))], t(datModule), use = "p") 
+        varExpl[c(1:min(n,p,nVarExplained)),i]= apply(veMat^2, 1, mean, na.rm = TRUE)
         # this is the first principal component
         svd1$v[,1]
       }, silent = TRUE);
@@ -204,7 +209,9 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
           alignSign = sign(covEx[, hub]);
           alignSign[is.na(alignSign)] = 0;
           isHub[i] = TRUE;
-          scaledExpr %*% as.matrix(kIM * alignSign)/sum(kIM);
+          pcx = scaledExpr %*% as.matrix(kIM * alignSign)/sum(kIM);
+          varExpl[1, i] = mean(cor(pcx, t(datModule), use = "p")^2, na.rm = TRUE)
+          pcx
         }, silent = TRUE);
       }
     }
@@ -282,6 +289,7 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
 
 removeGreyME = function(MEs, greyMEName = paste(moduleColor.getMEprefix(), "grey", sep=""))
 {
+  newMEs = MEs;
   if (is.vector(MEs) & mode(MEs)=="list")
   {
     warned = 0;
@@ -302,16 +310,16 @@ removeGreyME = function(MEs, greyMEName = paste(moduleColor.getMEprefix(), "grey
          }
       }
     }
-  } else if (is.data.frame(MEs))
-  {
+  } else {
+    if (length(dim(MEs))!=2) stop("Argument 'MEs' has incorrect dimensions.")
+    MEs = as.data.frame(MEs);
     if (greyMEName %in% names(MEs))
     {
        newMEs = MEs[, names(MEs)!=greyMEName];
     } else {
-       newMEs = MEs;
        warning("removeGreyME: The given grey ME name was not found among the names of given MEs.");
     }
-  }
+  } 
  
   newMEs;
 }
@@ -802,7 +810,9 @@ multiSetMEs = function(exprData, colors, universalColors = NULL, useSets = NULL,
 #---------------------------------------------------------------------------------------------
 # This function merges modules whose MEs fall on one branch of a hierarchical clustering tree
 
-mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, useAbs = FALSE, 
+mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, 
+                             impute = TRUE,
+                             useAbs = FALSE, 
                              iterate = TRUE,
                              relabel = FALSE, colorSeq = NULL, getNewMEs = TRUE,
                              useSets = NULL, checkDataFormat = TRUE, 
@@ -872,6 +882,7 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, useA
 
   done = FALSE; iteration = 1;
 
+  MergedColors = colors;
   ok = try( 
   {
     while (!done)
@@ -879,7 +890,7 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, useA
       if (is.null(MEs)) 
       {
         MEs = multiSetMEs(exprData, colors = NULL, universalColors = colors,
-                        useSets = useSets, 
+                        useSets = useSets, impute = impute,
                         subHubs = TRUE, trapErrors = FALSE,
                         verbose = verbose-1, indent = indent+1);
         MEs = consensusOrderMEs(MEs, useAbs = useAbs, useSets = useSets, greyLast = TRUE,
@@ -890,7 +901,7 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, useA
         if ((iteration==1) & (verbose>0)) printFlush(paste(spaces, "  Number of given module colors", 
                   "does not match number of given MEs => recalculating the MEs."))
         MEs = multiSetMEs(exprData, colors = NULL, universalColors = colors,
-                        useSets = useSets, 
+                        useSets = useSets, impute = impute,
                         subHubs = TRUE, trapErrors = FALSE, 
                         verbose = verbose-1, indent = indent+1);
         MEs = consensusOrderMEs(MEs, useAbs = useAbs, useSets = useSets, greyLast = TRUE,
@@ -910,6 +921,7 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, useA
             paste(colLevs, collapse = ", ")));
         printFlush(paste(spaces, " ..there is nothing to merge."));
         MergedNewColors = colors;
+        MergedColors = colors;
         nOldMods = 1; nNewMods = 1;
         oldTree = NULL; Tree = NULL;
         break;
@@ -1022,7 +1034,7 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL, useA
       {
         if (verbose>0) printFlush(paste(spaces, "  Calculating new MEs..."));
         NewMEs = multiSetMEs(exprData, colors = NULL, universalColors = MergedNewColors,
-                             useSets = useSets, subHubs = TRUE, trapErrors = FALSE,
+                             useSets = useSets, impute = impute, subHubs = TRUE, trapErrors = FALSE,
                              verbose = verbose-1, indent = indent+1);
         newMEs = consensusOrderMEs(NewMEs, useAbs = useAbs, useSets = useSets, greyLast = TRUE,
                                    greyName = greyMEname);
