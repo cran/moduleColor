@@ -1,3 +1,23 @@
+2008-05-10: 1.06
+
+	. saving and restoring of the random number seed in moduleEigengenes 
+	  now works correctly.
+
+	. plotHclustColors now correctly uses names of given colors, if they
+	  exists.
+	
+	. mergeCloseModules can now optionally exclude grey ME from being calculated (faster
+	  and less uninteresting output). Set getNewGreyME = FALSE to exclude the grey ME. 
+	  The default is TRUE for backward compatibility.
+
+	. orderMEs now correctly orders varExplained as well
+
+	. Fixed a bug in mergeCloseModules which caused the names of
+	  calculated MEs to correspond to labels before relabeling.
+
+	. Corrected a problem in hub calculation that caused the returning of
+	  unnecessary NAs in moduleEigengenes
+
 2008-04-09: 1.05-03
 
 	. Changed calculation of proportion of variance explained in

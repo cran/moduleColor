@@ -12,15 +12,15 @@ merging of closely related modules.
 \details{
 \tabular{ll}{
 Package: \tab moduleColor\cr
-Version: \tab 1.05-3\cr
-Date: \tab 2008-04-09\cr
+Version: \tab 1.06\cr
+Date: \tab 2008-05-10\cr
 Depends: \tab R, stats, impute, grDevices, dynamicTreeCut\cr
 ZipData: \tab no\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab 
 http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/BranchCutting/\cr
-Packaged: \tab Wed Apr 09 13:02:08 2008; plangfelder\cr
-Built: \tab R 2.4.1; ; 2008-04-09 13:02:57; unix\cr
+Packaged: \tab Sat May 10 13:02:08 2008; plangfelder\cr
+Built: \tab R 2.4.1; ; 2008-05-10 13:02:57; unix\cr
 }
 
 Index:

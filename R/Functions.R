@@ -55,7 +55,7 @@ plotHclustColors=function(dendro, colors, rowLabels = NULL, cex.rowLabels = 0.9,
   colors = as.matrix(colors);
   dimC = dim(colors)
 
-  if (is.null(rowLabels) & (length(names(colors))==dimC[2])) rowNames = names(colors);
+  if (is.null(rowLabels) & (length(names(colors))==dimC[2])) rowNames = names(as.data.frame(colors));
 
   options(stringsAsFactors=FALSE);
   if (length(dendro$order) != dimC[1] ) 
@@ -175,7 +175,9 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
              seedSaved = TRUE;
           }
           datModule = impute.knn(as.matrix(datModule), k = min(10, nrow(datModule)-1))
-          if (seedSaved) .Random.seed = saved.seed;
+          # The <<- in the next line is extremely important. Using = or <- will create a local variable of
+          # the name .Random.seed and will leave the important global .Random.seed untouched.
+          if (seedSaved) .Random.seed <<- saved.seed;
         }
         datModule=t(scale(t(datModule)));
         svd1 = svd(datModule, nu = min(n, p, nPC), nv = min(n, p, nPC));
@@ -209,7 +211,10 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
           alignSign = sign(covEx[, hub]);
           alignSign[is.na(alignSign)] = 0;
           isHub[i] = TRUE;
-          pcx = scaledExpr %*% as.matrix(kIM * alignSign)/sum(kIM);
+          pcxMat = scaledExpr * 
+                matrix(kIM * alignSign, nrow = nrow(scaledExpr), ncol = ncol(scaledExpr), byrow = TRUE) /
+                sum(kIM);
+          pcx = apply(pcxMat, 1, sum, na.rm = TRUE);
           varExpl[1, i] = mean(cor(pcx, t(datModule), use = "p")^2, na.rm = TRUE)
           pcx
         }, silent = TRUE);
@@ -386,6 +391,11 @@ orderMEs = function(MEs, greyLast = TRUE,
     {
       orderedMEs[[set]]$averageExpr = MEs[[set]]$averageExpr[, order]
       names(orderedMEs[[set]]$averageExpr) = names(MEs[[set]]$data)[order];
+    }
+    if (!is.null(MEs[[set]]$varExplained))
+    {
+      orderedMEs[[set]]$varExplained = MEs[[set]]$varExplained[, order]
+      names(orderedMEs[[set]]$varExplained) = names(MEs[[set]]$data)[order];
     }
   }
   if (multiSet) {
@@ -814,7 +824,9 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL,
                              impute = TRUE,
                              useAbs = FALSE, 
                              iterate = TRUE,
-                             relabel = FALSE, colorSeq = NULL, getNewMEs = TRUE,
+                             relabel = FALSE, colorSeq = NULL, 
+                             getNewMEs = TRUE,
+                             getNewUnassdME = TRUE,
                              useSets = NULL, checkDataFormat = TRUE, 
                              unassdColor = ifelse(is.numeric(colors), 0, "grey"), 
                              trapErrors = FALSE,
@@ -891,10 +903,10 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL,
       {
         MEs = multiSetMEs(exprData, colors = NULL, universalColors = colors,
                         useSets = useSets, impute = impute,
-                        subHubs = TRUE, trapErrors = FALSE,
+                        subHubs = TRUE, trapErrors = FALSE, excludeGrey = TRUE, 
+                        grey = unassdColor,
                         verbose = verbose-1, indent = indent+1);
-        MEs = consensusOrderMEs(MEs, useAbs = useAbs, useSets = useSets, greyLast = TRUE,
-                                greyName = greyMEname);
+        MEs = consensusOrderMEs(MEs, useAbs = useAbs, useSets = useSets, greyLast = FALSE);
         collectGarbage();
       } else if (nlevels(as.factor(colors))!=checkMEs$nGenes)
       {
@@ -902,10 +914,10 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL,
                   "does not match number of given MEs => recalculating the MEs."))
         MEs = multiSetMEs(exprData, colors = NULL, universalColors = colors,
                         useSets = useSets, impute = impute,
-                        subHubs = TRUE, trapErrors = FALSE, 
+                        subHubs = TRUE, trapErrors = FALSE, excludeGrey = TRUE,
+                        grey = unassdColor,
                         verbose = verbose-1, indent = indent+1);
-        MEs = consensusOrderMEs(MEs, useAbs = useAbs, useSets = useSets, greyLast = TRUE,
-                                greyName = greyMEname);
+        MEs = consensusOrderMEs(MEs, useAbs = useAbs, useSets = useSets, greyLast = FALSE);
         collectGarbage();
       }
       if (iteration==1) oldMEs = MEs;
@@ -1030,14 +1042,38 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL,
 
     if (getNewMEs)
     {
-      if (nNewMods<nOldMods)
+      if (nNewMods<nOldMods | relabel | getNewUnassdME)
       {
         if (verbose>0) printFlush(paste(spaces, "  Calculating new MEs..."));
         NewMEs = multiSetMEs(exprData, colors = NULL, universalColors = MergedNewColors,
                              useSets = useSets, impute = impute, subHubs = TRUE, trapErrors = FALSE,
+                             excludeGrey = !getNewUnassdME, grey = unassdColor,
                              verbose = verbose-1, indent = indent+1);
         newMEs = consensusOrderMEs(NewMEs, useAbs = useAbs, useSets = useSets, greyLast = TRUE,
                                    greyName = greyMEname);
+        MEDiss = vector(mode="list", length = nSets);
+        useMEs = c(1:dim(newMEs[[1]]$data)[2])[names(newMEs[[1]]$data)!=greyMEname];
+        if (length(useMEs)>1) 
+        {
+          for (set in useSets)
+          {
+            if (useAbs)
+            {
+                diss = 1-abs(cor(newMEs[[set]]$data[, useMEs], use = "p"));
+            } else {
+                diss = 1-cor(newMEs[[set]]$data[, useMEs], use = "p");
+            }
+            MEDiss[[set]] = list(Diss = diss);
+          }
+          for (set in useSets)
+            if (set==useSets[1])
+            {
+              ConsDiss = MEDiss[[set]]$Diss;
+            } else {
+              ConsDiss = pmax(ConsDiss, MEDiss[[set]]$Diss);
+            }
+          Tree = hclust(as.dist(ConsDiss), method = "average");
+        } else Tree = NULL;
       } else {
         newMEs = MEs;
       }

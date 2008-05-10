@@ -6,10 +6,17 @@
 eigengenes.
 }
 \usage{
-mergeCloseModules(exprData, colors, cutHeight = 0.2, MEs = NULL, 
+mergeCloseModules(exprData, colors, 
+                  cutHeight = 0.2, 
+                  MEs = NULL, 
                   impute = TRUE,
-                  useAbs = FALSE, iterate = TRUE, relabel = FALSE, 
-                  colorSeq = NULL, getNewMEs = TRUE, useSets = NULL,
+                  useAbs = FALSE, 
+                  iterate = TRUE, 
+                  relabel = FALSE, 
+                  colorSeq = NULL, 
+                  getNewMEs = TRUE, 
+                  getNewUnassdME = TRUE,
+                  useSets = NULL,
                   checkDataFormat = TRUE,
                   unassdColor = ifelse(is.numeric(colors), 0, "grey"),
                   trapErrors = FALSE,
@@ -49,6 +56,11 @@ in this package if \code{colors} are not numeric, and to integers starting from 
 
   \item{getNewMEs}{Controls whether module eigengenes of merged modules should be calculated and
 returned.}
+
+  \item{getNewUnassdME}{When doing module eigengene manipulations, the function does not normally
+calculate the eigengene of the 'module' of unassigned ('grey') genes. Setting this option to
+\code{TRUE} will force the calculation of the unassigned eigengene in the returned newMEs, but not
+in the returned oldMEs.}
 
   \item{useSets}{A vector of scalar allowing the user to specify which sets will be used to calculate the
 consensus dissimilarity of module eigengenes. Defaults to all given sets. } 
