@@ -1,3 +1,13 @@
+2008-06-11: 1.08
+
+	. multiSetMEs gains the argument useGenes that can optionally specify a subset of genes to be
+	  used for calculations.
+
+2008-05-16: 1.06-1
+
+	. One more fix for plotHclustColors: now correctly uses names of given colors, if they
+	  exists. 
+
 2008-05-10: 1.06
 
 	. saving and restoring of the random number seed in moduleEigengenes 

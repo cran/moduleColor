@@ -9,7 +9,7 @@
 #
 #-----------------------------------------------------------------------------------------------
 
-.moduleColorOptions = list(MEprefix = "ME", version = "1.05-3", revisionDate = "Apr 09, 2008")
+.moduleColorOptions = list(MEprefix = "ME", version = "1.08", revisionDate = "Jun 11, 2008")
 
 .onLoad = function(libname, pkgname)
 {
@@ -55,17 +55,17 @@ plotHclustColors=function(dendro, colors, rowLabels = NULL, cex.rowLabels = 0.9,
   colors = as.matrix(colors);
   dimC = dim(colors)
 
-  if (is.null(rowLabels) & (length(names(colors))==dimC[2])) rowNames = names(as.data.frame(colors));
+  if (is.null(rowLabels) & (length(dimnames(colors)[[2]])==dimC[2])) rowLabels = names(as.data.frame(colors));
 
   options(stringsAsFactors=FALSE);
   if (length(dendro$order) != dimC[1] ) 
     stop("ERROR: length of colors vector not compatible with number of objects in the hierarchical tree.");
-
   nSets = dimC[2];
   C = colors[dendro$order, ]; 
   step = 1/(dimC[1]-1);
   ystep = 1/nSets;
   barplot(height=1, col = "white", border=FALSE, space=0, axes=FALSE, ...)
+  charWidth = strwidth("W")/2;
   for (j in 1:nSets)
   {
     ind = (1:dimC[1]);
@@ -78,9 +78,9 @@ plotHclustColors=function(dendro, colors, rowLabels = NULL, cex.rowLabels = 0.9,
     }
     if (is.null(rowLabels))
     {
-        text(as.character(j), pos=2, x=0, y=ystep*(j-0.5), cex=cex.rowLabels, xpd = TRUE);
+        text(as.character(j), pos=2, x= -charWidth -0.5*step, y=ystep*(j-0.5), cex=cex.rowLabels, xpd = TRUE);
     } else {
-        text(rowLabels[j], pos=2, x=0, y=ystep*(j-0.5), cex=cex.rowLabels, xpd = TRUE);
+        text(rowLabels[j], pos=2, x= -charWidth -0.5*step, y=ystep*(j-0.5), cex=cex.rowLabels, xpd = TRUE);
     } 
   }
   for (j in 1:nSets) lines(x=c(0,1), y=c(ystep*j,ystep*j));
@@ -146,7 +146,13 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
 
   nVarExplained = min(nPC, maxVarExplained);
   modlevels=levels(factor(colors))
-  if (excludeGrey) modlevels = modlevels[as.character(modlevels)!=as.character(grey)]
+  if (excludeGrey)
+    if (sum(as.character(modlevels)!=as.character(grey))>0) {
+      modlevels = modlevels[as.character(modlevels)!=as.character(grey)]
+    } else {
+      stop(paste("Color levels are empty. Possible reason: the only color is grey",
+                 "and grey module is excluded from the calculation."));
+    }
   PrinComps = data.frame(matrix(NA,nrow=dim(expr)[[1]], ncol= length(modlevels))) 
   averExpr = data.frame(matrix(NA,nrow=dim(expr)[[1]], ncol= length(modlevels))) 
   varExpl= data.frame(matrix(NA, nrow= nVarExplained, ncol= length(modlevels)))
@@ -730,7 +736,8 @@ checkSets = function(data, checkStructure = FALSE, useSets = NULL)
 #
 #--------------------------------------------------------------------------------------
 
-multiSetMEs = function(exprData, colors, universalColors = NULL, useSets = NULL, impute = TRUE, 
+multiSetMEs = function(exprData, colors, universalColors = NULL, useSets = NULL, 
+                       useGenes = NULL, impute = TRUE, 
                        nPC = 1, align = "along average", excludeGrey = FALSE, 
                        grey = ifelse(is.null(universalColors), ifelse(is.numeric(colors), 0, "grey"), 
                                      ifelse(is.numeric(universalColors), 0, "grey")),
@@ -747,42 +754,72 @@ multiSetMEs = function(exprData, colors, universalColors = NULL, useSets = NULL,
   nGenes = setsize$nGenes;
   nSamples = setsize$nSamples;
 
-  if (verbose>0) printFlush(paste(spaces,"multiSetMEs: Looking for module MEs."));
+  if (verbose>0) printFlush(paste(spaces,"multiSetMEs: Calculating module MEs."));
   MEs = vector(mode="list", length=nSets);
   consValidMEs = NULL;
   if (!is.null(universalColors))
     consValidColors = universalColors;
   if (is.null(useSets)) useSets = c(1:nSets);
-  for (set in useSets) {
-    if (verbose>0) printFlush(paste(spaces,"  Working on set", as.character(set), "...")); 
-    if (is.null(universalColors)) {
-      setColors = colors[,set];
-    } else {
-      setColors = universalColors; 
-    }
-    setMEs = moduleEigengenes(expr = exprData[[set]]$data,
-                          color = setColors, impute = impute, nPC = nPC, align = align, 
-                          excludeGrey = excludeGrey, grey = grey,
-                          trapErrors = trapErrors, subHubs = subHubs,
-                          returnValidOnly = FALSE, softPower = softPower,
-                          verbose = verbose-1, indent = indent+1);
-    if (!is.null(universalColors) && (!setMEs$allOK))
-    {
-      if (is.null(consValidMEs)) {
-        consValidMEs = setMEs$validMEs;
+  if (is.null(useGenes))
+  { 
+    for (set in useSets) {
+      if (verbose>0) printFlush(paste(spaces,"  Working on set", as.character(set), "...")); 
+      if (is.null(universalColors)) {
+        setColors = colors[,set];
       } else {
-        consValidMEs = consValidMEs * setMEs$validMEs;
+        setColors = universalColors; 
       }
-      consValidColors[setMEs$validColors!=universalColors] = 
-          setMEs$validColors[setMEs$validColors!=universalColors]
+      setMEs = moduleEigengenes(expr = exprData[[set]]$data,
+                            color = setColors, impute = impute, nPC = nPC, align = align, 
+                            excludeGrey = excludeGrey, grey = grey,
+                            trapErrors = trapErrors, subHubs = subHubs,
+                            returnValidOnly = FALSE, softPower = softPower,
+                            verbose = verbose-1, indent = indent+1);
+      if (!is.null(universalColors) && (!setMEs$allOK))
+      {
+        if (is.null(consValidMEs)) {
+          consValidMEs = setMEs$validMEs;
+        } else {
+          consValidMEs = consValidMEs * setMEs$validMEs;
+        }
+        consValidColors[setMEs$validColors!=universalColors] = 
+            setMEs$validColors[setMEs$validColors!=universalColors]
+      }
+      MEs[[set]] = setMEs;
+      names(MEs[[set]])[names(setMEs)=='eigengenes'] = 'data';
+      # Here's what moduleEigengenes returns:
+      #
+      #  list(eigengenes = PrinComps, averageExpr = averExpr, varExplained = varExpl, nPC = nPC, 
+      #       validMEs = validMEs, validColors = validColors, allOK = allOK, allPC = allPC, isPC = isPC,
+      #       isHub = isHub, validAEs = validAEs, allAEOK = allAEOK)
     }
-    MEs[[set]] = setMEs;
-    names(MEs[[set]])[names(setMEs)=='eigengenes'] = 'data';
-# Here's what moduleEigengenes returns:
-#
-#  list(eigengenes = PrinComps, averageExpr = averExpr, varExplained = varExpl, nPC = nPC, 
-#       validMEs = validMEs, validColors = validColors, allOK = allOK, allPC = allPC, isPC = isPC,
-#       isHub = isHub, validAEs = validAEs, allAEOK = allAEOK)
+  } else {
+    for (set in useSets) {
+      if (verbose>0) printFlush(paste(spaces,"  Working on set", as.character(set), "...")); 
+      if (is.null(universalColors)) {
+        setColors = colors[useGenes ,set];
+      } else {
+        setColors = universalColors[useGenes]; 
+      }
+      setMEs = moduleEigengenes(expr = exprData[[set]]$data[, useGenes],
+                            color = setColors, impute = impute, nPC = nPC, align = align, 
+                            excludeGrey = excludeGrey, grey = grey,
+                            trapErrors = trapErrors, subHubs = subHubs,
+                            returnValidOnly = FALSE, softPower = softPower,
+                            verbose = verbose-1, indent = indent+1);
+      if (!is.null(universalColors) && (!setMEs$allOK))
+      {
+        if (is.null(consValidMEs)) {
+          consValidMEs = setMEs$validMEs;
+        } else {
+          consValidMEs = consValidMEs * setMEs$validMEs;
+        }
+        consValidColors[setMEs$validColors!=universalColors[useGenes]] = 
+            setMEs$validColors[setMEs$validColors!=universalColors[useGenes]]
+      }
+      MEs[[set]] = setMEs;
+      names(MEs[[set]])[names(setMEs)=='eigengenes'] = 'data';
+    }
   }
   if (!is.null(universalColors))
   {

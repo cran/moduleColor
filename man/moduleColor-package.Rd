@@ -12,15 +12,15 @@ merging of closely related modules.
 \details{
 \tabular{ll}{
 Package: \tab moduleColor\cr
-Version: \tab 1.06\cr
-Date: \tab 2008-05-10\cr
+Version: \tab 1.08  \cr
+Date: \tab 2008-06-11\cr
 Depends: \tab R, stats, impute, grDevices, dynamicTreeCut\cr
 ZipData: \tab no\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab 
 http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/BranchCutting/\cr
-Packaged: \tab Sat May 10 13:02:08 2008; plangfelder\cr
-Built: \tab R 2.4.1; ; 2008-05-10 13:02:57; unix\cr
+Packaged: \tab Wed Jun 11 13:02:08 2008; plangfelder\cr
+Built: \tab R 2.4.1; ; 2008-06-11 13:02:57; unix\cr
 }
 
 Index:
@@ -37,7 +37,6 @@ labels2colors           Convert numerical labels to colors.
 mergeCloseModules       Merge close modules of gene expression data.
 moduleColor-package     Basic module functions.
 moduleColor.getMEprefix	Get the prefix used to label module eigengenes.
-moduleColor.setMEprefix	Set the prefix used to label module eigengenes.
 moduleColor.version	Returns the version number of the package.
 moduleColor.revisionDate
 			Returns the revision date of the package.
@@ -57,7 +56,4 @@ Peter Langfelder <Peter.Langfelder@gmail.com> and Steve Horvath
 
 Maintainer: Peter Langfelder <Peter.Langfelder@gmail.com>
 }
-\references{ }
 \keyword{ package }
-\seealso{ }
-\examples{ }

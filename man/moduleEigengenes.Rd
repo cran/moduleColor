@@ -144,7 +144,5 @@ Analysis", Statistical Applications in Genetics and Molecular Biology: Vol. 4: N
 \author{ 
 Steve Horvath \email{SHorvath@mednet.ucla.edu}, Peter Langfelder
 \email{Peter.Langfelder@gmail.com} }
-\seealso{\code{\link{svd}}, \code{impute.knn}} 
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
+\seealso{\code{\link[base]{svd}}, \code{\link[impute]{impute.knn}} }
 \keyword{misc}

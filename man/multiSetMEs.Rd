@@ -9,6 +9,7 @@ multiSetMEs(exprData,
             colors, 
             universalColors = NULL, 
             useSets = NULL, 
+            useGenes = NULL,
             impute = TRUE, 
             nPC = 1, 
             align = "along average", 
@@ -37,6 +38,10 @@ to all sets). If given, takes precedence over \code{color}.}
 
   \item{useSets}{If calculations are requested in (a) selected set(s) only, the set(s) can be specified
 here. Defaults to all sets.}
+
+  \item{useGenes}{Can be used to restrict calculation to a subset of genes (the same subset in all
+sets). If given, \code{validColors} in the returned list will only contain colors for the genes
+specified in \code{useGenes}.}
 
   \item{impute}{Logical. If \code{TRUE}, expression data will be checked for the presence of \code{NA}
 entries and if the latter are present, numerical data will be imputed, using function \code{impute.knn}

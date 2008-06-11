@@ -8,7 +8,7 @@
 moduleNumber(dendro, cutHeight = 0.9, minSize = 50)
 }
 \arguments{
-  \item{dendro}{a hierarchical clustering dendorgram such as one returned by \code{hclust}.  }
+  \item{dendro}{a hierarchical clustering dendorgram such as one returned by \code{\link[stats]{hclust}}.  }
   \item{cutHeight}{Maximum joining heights that will be considered.  }
   \item{minSize}{Minimum cluster size.  }
 }
@@ -25,6 +25,6 @@ labels into a standard order.}
   Peter Langfelder, \email{Peter.Langfelder@gmail.com}
 }
 \seealso{
-  \code{\link{hclust}}, \code{\link{cutree}}, \code{\link{normalizeLabels}}
+  \code{\link[stats]{hclust}}, \code{\link[stats]{cutree}}, \code{\link{normalizeLabels}}
 }
 \keyword{cluster}

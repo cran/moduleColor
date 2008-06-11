@@ -39,8 +39,4 @@ errors rather than be bulletproof.}
 \author{ 
   Peter Langfelder, \email{Peter.Langfelder@gmail.com}
 }
-%\seealso{ ~~objects to See Also as \code{\link{help}}, ~~~ }
-%\examples{}
-% Add one or more standard keywords, see file 'KEYWORDS' in the
-% R documentation directory.
 \keyword{ misc }

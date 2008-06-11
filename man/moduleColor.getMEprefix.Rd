@@ -23,6 +23,6 @@ instructive and used in some newer analyses.
   Peter Langfelder, \email{Peter.Langfelder@gmail.com}
 }
 \seealso{
-  \code{\link{moduleColor.setMEprefix}}, \code{\link{moduleEigengenes}}}
+  \code{\link{moduleColor.setMEprefix}}, \code{\link{moduleEigengenes}}
 }
 \keyword{misc}
