@@ -25,7 +25,7 @@ individual set dissimilarities of the given eigengenes in each set, then takes t
 average over all sets. For details on the structure of imput data, see \code{\link{checkSets}}. 
 }
 \value{
-A dataframe containing the matrix of dissimilarities, with \code{names} and \code{\rownames} set
+A dataframe containing the matrix of dissimilarities, with \code{names} and \code{rownames} set
 appropriately.
 }
 %\references{

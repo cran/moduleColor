@@ -1,6 +1,6 @@
 \name{plotHclustColors}
 \alias{plotHclustColors}
-\title{Plot color bars corresponding to modules}
+\title{Plot color rows corresponding to modules}
 \description{
   Plot color bars corresponding to modules, usually beneath a dendrogram.
 }
