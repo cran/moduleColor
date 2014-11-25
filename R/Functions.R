@@ -11,13 +11,13 @@
 
 .moduleColorOptions = list(MEprefix = "ME", version = "1.08", revisionDate = "Jun 11, 2008")
 
-.onLoad = function(libname, pkgname)
-{
-  cat(paste("Package moduleColor, version", .moduleColorOptions$version, "revision date", 
-        .moduleColorOptions$revisionDate, "\n"));
-  cat(paste("  Active module eigengene name prefix:", .moduleColorOptions$MEprefix, "\n"));
-  #cat(paste("  To change it, use moduleColor.setMEprefix(newPrefix).\n \n"));
-}
+#.onLoad = function(libname, pkgname)
+#{
+#  packageStartupMessage(paste("Package moduleColor, version", .moduleColorOptions$version, "revision date", 
+#        .moduleColorOptions$revisionDate, "\n"));
+#  packageStartupMessage(paste("  Active module eigengene name prefix:", .moduleColorOptions$MEprefix, "\n"));
+#  #cat(paste("  To change it, use moduleColor.setMEprefix(newPrefix).\n \n"));
+#}
 
 moduleColor.setMEprefix = function(prefix)
 {
@@ -770,7 +770,7 @@ multiSetMEs = function(exprData, colors, universalColors = NULL, useSets = NULL,
         setColors = universalColors; 
       }
       setMEs = moduleEigengenes(expr = exprData[[set]]$data,
-                            color = setColors, impute = impute, nPC = nPC, align = align, 
+                            colors = setColors, impute = impute, nPC = nPC, align = align, 
                             excludeGrey = excludeGrey, grey = grey,
                             trapErrors = trapErrors, subHubs = subHubs,
                             returnValidOnly = FALSE, softPower = softPower,
@@ -802,7 +802,7 @@ multiSetMEs = function(exprData, colors, universalColors = NULL, useSets = NULL,
         setColors = universalColors[useGenes]; 
       }
       setMEs = moduleEigengenes(expr = exprData[[set]]$data[, useGenes],
-                            color = setColors, impute = impute, nPC = nPC, align = align, 
+                            colors = setColors, impute = impute, nPC = nPC, align = align, 
                             excludeGrey = excludeGrey, grey = grey,
                             trapErrors = trapErrors, subHubs = subHubs,
                             returnValidOnly = FALSE, softPower = softPower,

@@ -3,7 +3,7 @@
 \alias{moduleColor}
 \docType{package}
 \title{
-Basic module functions
+Basic Module Functions
 }
 \description{
 Methods for color labeling, calculation of eigengenes,
@@ -12,15 +12,13 @@ merging of closely related modules.
 \details{
 \tabular{ll}{
 Package: \tab moduleColor\cr
-Version: \tab 1.08  \cr
-Date: \tab 2008-06-11\cr
+Version: \tab 1.08-3  \cr
+Date: \tab 2014-11-25\cr
 Depends: \tab R, stats, impute, grDevices, dynamicTreeCut\cr
 ZipData: \tab no\cr
 License: \tab GPL version 2 or newer\cr
 URL: \tab 
 http://www.genetics.ucla.edu/labs/horvath/CoexpressionNetwork/BranchCutting/\cr
-Packaged: \tab Wed Jun 11 13:02:08 2008; plangfelder\cr
-Built: \tab R 2.4.1; ; 2008-06-11 13:02:57; unix\cr
 }
 
 Index:

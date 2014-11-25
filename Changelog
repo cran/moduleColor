@@ -1,4 +1,12 @@
 
+2014-11-24: 1.08-3
+
+	. Changed package title to title case in description and help files.
+
+2014-11-24: 1.08-2
+
+	. Removed the junk file 'support' from the toplevel directory.
+
 2009-10-11: 1.08-1
 
 	. fix help file for consensusMEDissimilarity
