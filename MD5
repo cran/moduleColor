@@ -1,7 +1,7 @@
 6dd62d97d76eed278176e1be79056b64 *Changelog
-f9ed3d068d2a84b5269a440b6c30c307 *DESCRIPTION
-a264b9d384ac8a0d71982f05e33ea521 *NAMESPACE
-a005d9302e3f5678a663fc1e792ec250 *R/Functions.R
+87116f1109d3dcce211716a77521e777 *DESCRIPTION
+0ef9b4abeb8a4f98431b4bcdd9a39cfe *NAMESPACE
+6c1e78dd3e370e3d891b67aaaec1c9cb *R/Functions.R
 9c117fe808ac5e03f11839371b3a490d *man/checkSets.Rd
 e3f8541b1a35d25d0767fca0ecd2a2b3 *man/collectGarbage.Rd
 b7894dd42a2601088dca9dea50eff843 *man/consensusMEDissimilarity.Rd

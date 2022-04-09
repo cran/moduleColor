@@ -1,2 +1,5 @@
 exportPattern("^[^\\.]")
 import(grDevices, impute, dynamicTreeCut)
+importFrom("graphics", "barplot", "lines", "rect", "strwidth", "text")
+importFrom("stats", "as.dist", "cor", "cov", "cutree", "hclust")
+

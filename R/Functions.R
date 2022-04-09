@@ -193,7 +193,7 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
         # this is the first principal component
         svd1$v[,1]
       }, silent = TRUE);
-    if (class(pc)=='try-error')
+    if (inherits(pc, 'try-error'))
     {
       if ( (!subHubs) && (!trapErrors) ) stop(pc);
       if (subHubs)
@@ -227,7 +227,7 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
       }
     }
     
-    if (class(pc)=='try-error')
+    if (inherits(pc, 'try-error'))
     {
       if (!trapErrors) stop(pc);
       if (verbose>0)
@@ -256,7 +256,7 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
         }
         0;
       }, silent = TRUE);
-      if (class(ae)=='try-error')
+      if (inherits(ae, 'try-error'))
       {
         if (!trapErrors) stop(ae);
         if (verbose>0)
@@ -270,7 +270,7 @@ moduleEigengenes = function(expr, colors, impute = TRUE, nPC = 1, align = "along
                       "failed with the following error \n     ",
                       ae, "The returned average expression vector will be invalid.\n"));
       }
-      validAEs[i] = !(class(ae)=='try-error');
+      validAEs[i] = !inherits(ae, 'try-error')
     }
   } 
   allOK = (sum(!validMEs)==0)
@@ -672,7 +672,7 @@ moduleNumber = function(dendro, cutHeight = 0.9, minSize = 50)
 fixDataStructure = function(data, verbose = 0, indent = 0)
 {
   spaces = indentSpaces(indent);
-  if ((class(data)!="list") || (class(data[[1]])!="list"))
+  if (!inherits(data, "list") || !inherits(data[[1]], "list"))
   {
     if (verbose>0)
       printFlush(paste(spaces, 
@@ -698,7 +698,7 @@ checkSets = function(data, checkStructure = FALSE, useSets = NULL)
   if (is.null(useSets)) useSets = c(1:nSets);
   if (nSets<=0) stop("No data given.");
   structureOK = TRUE;
-  if ((class(data)!="list") || (class(data[[useSets[1]]])!="list"))
+  if (inherits(data, "list"))
   {
     if (checkStructure)
     {
@@ -1124,7 +1124,7 @@ mergeCloseModules = function(exprData, colors, cutHeight = 0.2, MEs = NULL,
     }
   }, silent = TRUE);
 
-  if (class(ok)=='try-error')
+  if (inherits(ok, "try-error"))
   {
     if (!trapErrors) stop(ok);
     if (verbose>0)
